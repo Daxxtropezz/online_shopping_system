@@ -1,0 +1,2063 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package online_shopping_system;
+
+import java.sql.*; // gets Connection, DriverManager, PreparedStatement, ResultSet, and ResultSetMetaData
+import javax.swing.*; // gets JFrame and JOptionPane
+import java.util.Vector;
+import javax.swing.table.*; // gets bothe the TableModel and DefaultTableModel
+
+/**
+ *
+ * @author MIRAFLORES, JOHN PAUL S. - BSIT 2F
+ */
+public class JPsOnlineShopping extends javax.swing.JFrame {
+
+    private static final String URL = "jdbc:mysql://localhost:3306/online_shopping_system?allowPublicKeyRetrieval=true&useSSL=false";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "@theHouseof25";
+
+    Connection conn = null;
+    PreparedStatement ps = null;
+    ResultSet rset = null;
+    ResultSetMetaData rsmData;
+    DefaultTableModel RecordTable;
+    TableModel model;
+    Vector columnData;
+    Object[] row;
+    int i, q;
+
+    /**
+     * Creates new form JPsOnlineShopping
+     */
+    public JPsOnlineShopping() {
+        initComponents();
+        String underlinec = "<html><u>Proceed to Cart</u></html>";
+        jlblPtoCart.setText(underlinec);
+        String underlinep = "<html><u>Back to Products</u></html>";
+        jlblBtoProd.setText(underlinep);
+        CartPanel.setVisible(false);
+    }
+
+    int xMouse;
+    int yMouse;
+
+    public void cartTable() {
+        try {
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            ps = conn.prepareStatement("SELECT PRODUCT_ID,CART_PRODUCTNAME,"
+                    + "ROUND((CART_PRODUCTPRICE * CART_QUANT),2) AS PRICE, CART_QUANT, CART_ID "
+                    + "FROM cart WHERE customer_id = ?");
+
+            ps.setString(1, lblID.getText());
+
+            rset = ps.executeQuery();
+            rsmData = rset.getMetaData();
+
+            q = rsmData.getColumnCount();
+
+            RecordTable = (DefaultTableModel) cartTable.getModel();
+            RecordTable.setRowCount(0);
+
+            while (rset.next()) {
+                columnData = new Vector();
+
+                for (i = 1; i <= q; i++) {
+                    columnData.add(rset.getString("CART_ID"));
+                    columnData.add(rset.getString("PRODUCT_ID"));
+                    columnData.add(rset.getString("CART_PRODUCTNAME"));
+                    columnData.add(rset.getString("PRICE"));
+                    columnData.add(rset.getString("CART_QUANT"));
+                }
+                RecordTable.addRow(columnData);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+
+    public void totalCartTable() {
+        try {
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            ps = conn.prepareStatement("SELECT ROUND(SUM(CART_PRODUCTPRICE * CART_QUANT),2) AS TOTAL FROM CART WHERE CUSTOMER_ID = ?");
+
+            ps.setString(1, lblID.getText());
+
+            rset = ps.executeQuery();
+
+            while (rset.next()) {
+                cartTotal.setText(rset.getString("TOTAL"));
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+
+    public void productTable() {
+        try {
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            ps = conn.prepareStatement("SELECT * FROM product WHERE product_id = ?");
+
+            ps.setString(1, IDNUMBER.getText());
+
+            rset = ps.executeQuery();
+
+            if (rset.next()) {
+                AddtoCart atc = new AddtoCart();
+                atc.setVisible(true);
+                atc.setLocationRelativeTo(this);
+
+                String ID = rset.getString("product_id");
+                String name = rset.getString("product_name");
+                String price = rset.getString("product_price");
+                String stock = rset.getString("product_stock");
+                String brand = rset.getString("product_brand");
+
+                AddtoCart.jPrice.setText(price);
+                AddtoCart.jName.setText(name);
+                AddtoCart.jID.setText(ID);
+                AddtoCart.jStock.setText(stock);
+                AddtoCart.jBrand.setText(brand);
+
+                if (Integer.parseInt(AddtoCart.jStock.getText()) == 0) {
+                    JOptionPane.showMessageDialog(null, "Out of Stock!");
+                    atc.dispose();
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Product seems like it doesn't exists!", "ERROR!", 2);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        HeadPanel = new javax.swing.JPanel();
+        jLogoutBtn = new javax.swing.JButton();
+        jCloseButton = new javax.swing.JButton();
+        jMinimizeButton = new javax.swing.JButton();
+        lblID = new javax.swing.JLabel();
+        HeadLabel = new javax.swing.JLabel();
+        WelcomeUser = new javax.swing.JLabel();
+        ProductsPanel = new javax.swing.JPanel();
+        forLockAspect = new javax.swing.JLabel();
+        ProductsPane = new javax.swing.JTabbedPane();
+        jNecklacesPanel = new javax.swing.JPanel();
+        ProductNecklacePane = new javax.swing.JTabbedPane();
+        jMensNecklacePanel = new javax.swing.JPanel();
+        jPriceCurrencySymbol3 = new javax.swing.JLabel();
+        jPriceCurrencySymbol2 = new javax.swing.JLabel();
+        jPriceCurrencySymbol1 = new javax.swing.JLabel();
+        jPriceCurrencySymbol = new javax.swing.JLabel();
+        jPriceOCN = new javax.swing.JLabel();
+        jPriceSCN = new javax.swing.JLabel();
+        jPriceLGCN = new javax.swing.JLabel();
+        jPriceDCN = new javax.swing.JLabel();
+        SilverChainNecklace = new javax.swing.JLabel();
+        DiamondChokerNecklace = new javax.swing.JLabel();
+        LinkGoldNecklace = new javax.swing.JLabel();
+        ObsidianChainNecklace = new javax.swing.JLabel();
+        jTitleSCN = new javax.swing.JLabel();
+        jTitleDCN = new javax.swing.JLabel();
+        jTitleLGCN = new javax.swing.JLabel();
+        jTitleOCN = new javax.swing.JLabel();
+        jWomensNecklacePanel = new javax.swing.JPanel();
+        jPriceEGC = new javax.swing.JLabel();
+        jPriceCurrencySymbol6 = new javax.swing.JLabel();
+        jPriceTDN = new javax.swing.JLabel();
+        jPriceCurrencySymbol5 = new javax.swing.JLabel();
+        jPriceBCN = new javax.swing.JLabel();
+        jPriceCurrencySymbol4 = new javax.swing.JLabel();
+        BALLCHAINNECKLACE = new javax.swing.JLabel();
+        TOUISSANTDIAMONDNECKLACE = new javax.swing.JLabel();
+        EMERALDGOLDENCHOKER = new javax.swing.JLabel();
+        jTitleBCN = new javax.swing.JLabel();
+        jTitleTDN = new javax.swing.JLabel();
+        jTItleEGC = new javax.swing.JLabel();
+        jRingsPanel = new javax.swing.JPanel();
+        ProductRingsPane = new javax.swing.JTabbedPane();
+        jMensRingsPane = new javax.swing.JPanel();
+        jTitleSSR = new javax.swing.JLabel();
+        jPriceCurrencySymbol10 = new javax.swing.JLabel();
+        jPriceSSR = new javax.swing.JLabel();
+        jTitleSMR = new javax.swing.JLabel();
+        jPriceCurrencySymbol9 = new javax.swing.JLabel();
+        jPriceSMR = new javax.swing.JLabel();
+        jTitleTR = new javax.swing.JLabel();
+        jPriceCurrencySymbol8 = new javax.swing.JLabel();
+        jPriceTR = new javax.swing.JLabel();
+        jPriceGOR = new javax.swing.JLabel();
+        jPriceCurrencySymbol7 = new javax.swing.JLabel();
+        jTitleGOR = new javax.swing.JLabel();
+        GoldOnyxRing = new javax.swing.JLabel();
+        titaniumRing = new javax.swing.JLabel();
+        SapphireMetalRing = new javax.swing.JLabel();
+        StainlessSteelRing = new javax.swing.JLabel();
+        jWomensRingsPane = new javax.swing.JPanel();
+        jTitleSDR = new javax.swing.JLabel();
+        jPriceCurrencySymbol13 = new javax.swing.JLabel();
+        jPriceSDR = new javax.swing.JLabel();
+        jTitleFDR = new javax.swing.JLabel();
+        jPriceCurrencySymbol12 = new javax.swing.JLabel();
+        jPriceFDR = new javax.swing.JLabel();
+        jTitleCDR = new javax.swing.JLabel();
+        jPriceCurrencySymbol11 = new javax.swing.JLabel();
+        jPriceCDR = new javax.swing.JLabel();
+        FloralDiamondRing = new javax.swing.JLabel();
+        SquareDiamondRing = new javax.swing.JLabel();
+        DiamondRing1 = new javax.swing.JLabel();
+        jEarringsPanel = new javax.swing.JPanel();
+        ProductEarringsPane = new javax.swing.JTabbedPane();
+        jMensEarringsPanel = new javax.swing.JPanel();
+        jPriceRE = new javax.swing.JLabel();
+        jPriceCurrencySymbol17 = new javax.swing.JLabel();
+        jTitleRE = new javax.swing.JLabel();
+        jPriceCE = new javax.swing.JLabel();
+        jPriceCurrencySymbol16 = new javax.swing.JLabel();
+        jTitleCE = new javax.swing.JLabel();
+        jPricePSE = new javax.swing.JLabel();
+        jPriceCurrencySymbol15 = new javax.swing.JLabel();
+        jTitlePSE = new javax.swing.JLabel();
+        jPriceCRE = new javax.swing.JLabel();
+        jPriceCurrencySymbol14 = new javax.swing.JLabel();
+        jTitleCRE = new javax.swing.JLabel();
+        CrossRoundedEarring = new javax.swing.JLabel();
+        PlainStudEarring = new javax.swing.JLabel();
+        CrossEarring = new javax.swing.JLabel();
+        RoundedEarring = new javax.swing.JLabel();
+        jWomensEarringsPanel = new javax.swing.JPanel();
+        jPriceWGOE = new javax.swing.JLabel();
+        jPriceCurrencySymbol20 = new javax.swing.JLabel();
+        jTitleWGOE = new javax.swing.JLabel();
+        jPriceGAE = new javax.swing.JLabel();
+        jPriceCurrencySymbol19 = new javax.swing.JLabel();
+        jTitleGAE = new javax.swing.JLabel();
+        jPriceSSE = new javax.swing.JLabel();
+        jPriceCurrencySymbol18 = new javax.swing.JLabel();
+        jTitleSSE = new javax.swing.JLabel();
+        SilverSapphireEarring = new javax.swing.JLabel();
+        GoldenAquamarine = new javax.swing.JLabel();
+        WhiteGoldOnyx = new javax.swing.JLabel();
+        jWristPanel = new javax.swing.JPanel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jBraceletsPane = new javax.swing.JPanel();
+        jPricePB = new javax.swing.JLabel();
+        jTitlePB = new javax.swing.JLabel();
+        jPriceCurrencySymbol24 = new javax.swing.JLabel();
+        jPriceCCB = new javax.swing.JLabel();
+        jTitleCCB = new javax.swing.JLabel();
+        jPriceCurrencySymbol23 = new javax.swing.JLabel();
+        jPriceCMBB = new javax.swing.JLabel();
+        jPriceCurrencySymbol22 = new javax.swing.JLabel();
+        jTitleCMBB = new javax.swing.JLabel();
+        jPriceHB = new javax.swing.JLabel();
+        jPriceCurrencySymbol21 = new javax.swing.JLabel();
+        jTitleHB = new javax.swing.JLabel();
+        PunkyBracelet = new javax.swing.JLabel();
+        HingedBangle = new javax.swing.JLabel();
+        Bangle = new javax.swing.JLabel();
+        ClassyMatteBlack = new javax.swing.JLabel();
+        jWatchPane = new javax.swing.JPanel();
+        jPriceMKCLW = new javax.swing.JLabel();
+        jPriceCurrencySymbol28 = new javax.swing.JLabel();
+        jTitleMKCLW = new javax.swing.JLabel();
+        jTitleFSBW = new javax.swing.JLabel();
+        jPriceFSBW = new javax.swing.JLabel();
+        jPriceCurrencySymbol27 = new javax.swing.JLabel();
+        jPriceFSW = new javax.swing.JLabel();
+        jPriceCurrencySymbol26 = new javax.swing.JLabel();
+        jTitleFSW = new javax.swing.JLabel();
+        jPriceDW = new javax.swing.JLabel();
+        jPriceCurrencySymbol25 = new javax.swing.JLabel();
+        jTitleDW = new javax.swing.JLabel();
+        ClassyLeather = new javax.swing.JLabel();
+        Didier = new javax.swing.JLabel();
+        FossilSilver = new javax.swing.JLabel();
+        FossilBlue = new javax.swing.JLabel();
+        ProductLabel = new javax.swing.JLabel();
+        jlblPtoCart = new javax.swing.JLabel();
+        IDNUMBER = new javax.swing.JLabel();
+        CartPanel = new javax.swing.JPanel();
+        HiddenCartID = new javax.swing.JTextField();
+        HiddenCrementationQuantity = new javax.swing.JTextField();
+        HiddenProductID = new javax.swing.JTextField();
+        HiddenCartQuantity = new javax.swing.JTextField();
+        cartInc = new javax.swing.JButton();
+        cartDec = new javax.swing.JButton();
+        cartTotal = new javax.swing.JTextField();
+        ttlTotal = new javax.swing.JLabel();
+        CartLabel = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        cartTable = new javax.swing.JTable();
+        cartProceedBtn = new javax.swing.JButton();
+        cartChkoutBtn = new javax.swing.JButton();
+        jlblBtoProd = new javax.swing.JLabel();
+        removeButton = new javax.swing.JButton();
+        Amount = new javax.swing.JTextField();
+        CartID = new javax.swing.JTextField();
+        ProdID = new javax.swing.JTextField();
+        CustID = new javax.swing.JTextField();
+        SFee = new javax.swing.JTextField();
+        CAddress = new javax.swing.JTextField();
+        ProdName = new javax.swing.JTextField();
+        PQuant = new javax.swing.JTextField();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
+
+        HeadPanel.setBackground(new java.awt.Color(15, 45, 66));
+        HeadPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                HeadPanelMouseDragged(evt);
+            }
+        });
+        HeadPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                HeadPanelMousePressed(evt);
+            }
+        });
+        HeadPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLogoutBtn.setBackground(new java.awt.Color(0, 102, 204));
+        jLogoutBtn.setFont(new java.awt.Font("Gulim", 0, 10)); // NOI18N
+        jLogoutBtn.setForeground(new java.awt.Color(255, 255, 255));
+        jLogoutBtn.setText("logout");
+        jLogoutBtn.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jLogoutBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLogoutBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jLogoutBtnActionPerformed(evt);
+            }
+        });
+        HeadPanel.add(jLogoutBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 50, 80, -1));
+
+        jCloseButton.setBackground(new java.awt.Color(0, 102, 204));
+        jCloseButton.setFont(new java.awt.Font("Gulim", 0, 18)); // NOI18N
+        jCloseButton.setForeground(new java.awt.Color(255, 255, 255));
+        jCloseButton.setText("x");
+        jCloseButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jCloseButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jCloseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCloseButtonActionPerformed(evt);
+            }
+        });
+        HeadPanel.add(jCloseButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(871, 27, 27, -1));
+
+        jMinimizeButton.setBackground(new java.awt.Color(0, 102, 204));
+        jMinimizeButton.setFont(new java.awt.Font("Gulim", 0, 18)); // NOI18N
+        jMinimizeButton.setForeground(new java.awt.Color(255, 255, 255));
+        jMinimizeButton.setText("-");
+        jMinimizeButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jMinimizeButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jMinimizeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMinimizeButtonActionPerformed(evt);
+            }
+        });
+        HeadPanel.add(jMinimizeButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(832, 27, 27, -1));
+
+        lblID.setBackground(new java.awt.Color(255, 255, 255));
+        lblID.setFont(new java.awt.Font("Elephant", 1, 12)); // NOI18N
+        lblID.setForeground(new java.awt.Color(15, 45, 66));
+        lblID.setText("00000");
+        HeadPanel.add(lblID, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 10, -1, -1));
+
+        HeadLabel.setFont(new java.awt.Font("Elephant", 0, 24)); // NOI18N
+        HeadLabel.setForeground(new java.awt.Color(255, 255, 255));
+        HeadLabel.setText("JP's JEWELRY SHOPPING");
+        HeadPanel.add(HeadLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 30, -1, -1));
+
+        WelcomeUser.setBackground(new java.awt.Color(255, 255, 255));
+        WelcomeUser.setFont(new java.awt.Font("Elephant", 0, 14)); // NOI18N
+        WelcomeUser.setForeground(new java.awt.Color(255, 255, 255));
+        WelcomeUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/DIAMONDicoSMALL.gif"))); // NOI18N
+        WelcomeUser.setText("Welcome, Username!");
+        HeadPanel.add(WelcomeUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 10, 270, 60));
+
+        ProductsPanel.setBackground(new java.awt.Color(108, 122, 137));
+        ProductsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        forLockAspect.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        forLockAspect.setForeground(new java.awt.Color(255, 255, 255));
+        ProductsPanel.add(forLockAspect, new org.netbeans.lib.awtextra.AbsoluteConstraints(806, 462, 120, -1));
+
+        jNecklacesPanel.setBackground(new java.awt.Color(15, 45, 66));
+        jNecklacesPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        ProductNecklacePane.setForeground(new java.awt.Color(153, 153, 153));
+
+        jMensNecklacePanel.setBackground(new java.awt.Color(255, 255, 255));
+        jMensNecklacePanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPriceCurrencySymbol3.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol3.setForeground(new java.awt.Color(102, 102, 102));
+        jPriceCurrencySymbol3.setText("PHP");
+        jMensNecklacePanel.add(jPriceCurrencySymbol3, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 200, -1, -1));
+
+        jPriceCurrencySymbol2.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol2.setForeground(new java.awt.Color(102, 102, 102));
+        jPriceCurrencySymbol2.setText("PHP");
+        jMensNecklacePanel.add(jPriceCurrencySymbol2, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 200, -1, -1));
+
+        jPriceCurrencySymbol1.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol1.setForeground(new java.awt.Color(102, 102, 102));
+        jPriceCurrencySymbol1.setText("PHP");
+        jMensNecklacePanel.add(jPriceCurrencySymbol1, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 200, -1, -1));
+
+        jPriceCurrencySymbol.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol.setForeground(new java.awt.Color(102, 102, 102));
+        jPriceCurrencySymbol.setText("PHP");
+        jMensNecklacePanel.add(jPriceCurrencySymbol, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 200, -1, -1));
+
+        jPriceOCN.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceOCN.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceOCN.setText("2175.00");
+        jMensNecklacePanel.add(jPriceOCN, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 200, -1, -1));
+
+        jPriceSCN.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceSCN.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceSCN.setText("1386.30");
+        jMensNecklacePanel.add(jPriceSCN, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 200, -1, -1));
+
+        jPriceLGCN.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceLGCN.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceLGCN.setText("4590.72");
+        jMensNecklacePanel.add(jPriceLGCN, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 200, -1, -1));
+
+        jPriceDCN.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceDCN.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceDCN.setText("4951.54");
+        jMensNecklacePanel.add(jPriceDCN, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 200, -1, -1));
+
+        SilverChainNecklace.setForeground(new java.awt.Color(255, 255, 255));
+        SilverChainNecklace.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/SilverChainNecklace - Copy.png"))); // NOI18N
+        SilverChainNecklace.setText("N107");
+        SilverChainNecklace.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        SilverChainNecklace.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SilverChainNecklaceMouseClicked(evt);
+            }
+        });
+        jMensNecklacePanel.add(SilverChainNecklace, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 50, -1, -1));
+
+        DiamondChokerNecklace.setForeground(new java.awt.Color(255, 255, 255));
+        DiamondChokerNecklace.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/DiamondChokerNecklace - Copy.png"))); // NOI18N
+        DiamondChokerNecklace.setText("N104");
+        DiamondChokerNecklace.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        DiamondChokerNecklace.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DiamondChokerNecklaceMouseClicked(evt);
+            }
+        });
+        jMensNecklacePanel.add(DiamondChokerNecklace, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, -1, -1));
+
+        LinkGoldNecklace.setForeground(new java.awt.Color(255, 255, 255));
+        LinkGoldNecklace.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/LinkGoldNecklace - Copy.png"))); // NOI18N
+        LinkGoldNecklace.setText("N105");
+        LinkGoldNecklace.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        LinkGoldNecklace.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LinkGoldNecklaceMouseClicked(evt);
+            }
+        });
+        jMensNecklacePanel.add(LinkGoldNecklace, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 50, -1, -1));
+
+        ObsidianChainNecklace.setForeground(new java.awt.Color(255, 255, 255));
+        ObsidianChainNecklace.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/ObsidianChainNecklace - Copy.png"))); // NOI18N
+        ObsidianChainNecklace.setText("N106");
+        ObsidianChainNecklace.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ObsidianChainNecklace.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ObsidianChainNecklaceMouseClicked(evt);
+            }
+        });
+        jMensNecklacePanel.add(ObsidianChainNecklace, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 50, -1, -1));
+
+        jTitleSCN.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleSCN.setText("Silver Chain Necklace");
+        jMensNecklacePanel.add(jTitleSCN, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 240, -1, -1));
+
+        jTitleDCN.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleDCN.setText("Diamond Choker Necklace");
+        jMensNecklacePanel.add(jTitleDCN, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, -1, -1));
+
+        jTitleLGCN.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleLGCN.setText("Link Golden Chain Necklace");
+        jMensNecklacePanel.add(jTitleLGCN, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 240, -1, -1));
+
+        jTitleOCN.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleOCN.setText("Obsidian Chain Necklace");
+        jMensNecklacePanel.add(jTitleOCN, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 240, -1, -1));
+
+        ProductNecklacePane.addTab("Men's", jMensNecklacePanel);
+
+        jWomensNecklacePanel.setBackground(new java.awt.Color(255, 255, 255));
+        jWomensNecklacePanel.setForeground(new java.awt.Color(204, 204, 204));
+        jWomensNecklacePanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPriceEGC.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceEGC.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceEGC.setText("29887.50");
+        jWomensNecklacePanel.add(jPriceEGC, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 200, -1, -1));
+
+        jPriceCurrencySymbol6.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol6.setForeground(new java.awt.Color(153, 153, 153));
+        jPriceCurrencySymbol6.setText("PHP");
+        jWomensNecklacePanel.add(jPriceCurrencySymbol6, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 200, -1, -1));
+
+        jPriceTDN.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceTDN.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceTDN.setText("25343.18");
+        jWomensNecklacePanel.add(jPriceTDN, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 200, -1, -1));
+
+        jPriceCurrencySymbol5.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol5.setForeground(new java.awt.Color(153, 153, 153));
+        jPriceCurrencySymbol5.setText("PHP");
+        jWomensNecklacePanel.add(jPriceCurrencySymbol5, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 200, -1, -1));
+
+        jPriceBCN.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceBCN.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceBCN.setText("2343.18");
+        jWomensNecklacePanel.add(jPriceBCN, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 200, -1, -1));
+
+        jPriceCurrencySymbol4.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol4.setForeground(new java.awt.Color(153, 153, 153));
+        jPriceCurrencySymbol4.setText("PHP");
+        jWomensNecklacePanel.add(jPriceCurrencySymbol4, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 200, -1, -1));
+
+        BALLCHAINNECKLACE.setForeground(new java.awt.Color(255, 255, 255));
+        BALLCHAINNECKLACE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/BALL CHAIN NECKLACE - Copy.png"))); // NOI18N
+        BALLCHAINNECKLACE.setText("N101");
+        BALLCHAINNECKLACE.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        BALLCHAINNECKLACE.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BALLCHAINNECKLACEMouseClicked(evt);
+            }
+        });
+        jWomensNecklacePanel.add(BALLCHAINNECKLACE, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, -1, -1));
+
+        TOUISSANTDIAMONDNECKLACE.setForeground(new java.awt.Color(255, 255, 255));
+        TOUISSANTDIAMONDNECKLACE.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/TOUISSANT DIAMOND NECKLACE - Copy.png"))); // NOI18N
+        TOUISSANTDIAMONDNECKLACE.setText("N102");
+        TOUISSANTDIAMONDNECKLACE.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        TOUISSANTDIAMONDNECKLACE.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TOUISSANTDIAMONDNECKLACEMouseClicked(evt);
+            }
+        });
+        jWomensNecklacePanel.add(TOUISSANTDIAMONDNECKLACE, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 50, -1, -1));
+
+        EMERALDGOLDENCHOKER.setForeground(new java.awt.Color(255, 255, 255));
+        EMERALDGOLDENCHOKER.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/EMERALD GOLDEN CHOKER - Copy.png"))); // NOI18N
+        EMERALDGOLDENCHOKER.setText("N103");
+        EMERALDGOLDENCHOKER.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        EMERALDGOLDENCHOKER.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                EMERALDGOLDENCHOKERMouseClicked(evt);
+            }
+        });
+        jWomensNecklacePanel.add(EMERALDGOLDENCHOKER, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 50, -1, -1));
+
+        jTitleBCN.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleBCN.setText("Ball Chain Necklace");
+        jWomensNecklacePanel.add(jTitleBCN, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 240, -1, -1));
+
+        jTitleTDN.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleTDN.setText("Touissant Diamond Necklace");
+        jWomensNecklacePanel.add(jTitleTDN, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 240, -1, -1));
+
+        jTItleEGC.setForeground(new java.awt.Color(0, 0, 0));
+        jTItleEGC.setText("Emerald Golden Choker");
+        jWomensNecklacePanel.add(jTItleEGC, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 240, -1, -1));
+
+        ProductNecklacePane.addTab("Women's", jWomensNecklacePanel);
+
+        jNecklacesPanel.add(ProductNecklacePane, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 21, -1, 290));
+
+        ProductsPane.addTab("Necklaces", jNecklacesPanel);
+
+        jRingsPanel.setBackground(new java.awt.Color(15, 45, 66));
+
+        jMensRingsPane.setBackground(new java.awt.Color(255, 255, 255));
+        jMensRingsPane.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jTitleSSR.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleSSR.setText("Stainless Steel Ring");
+        jMensRingsPane.add(jTitleSSR, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 230, -1, -1));
+
+        jPriceCurrencySymbol10.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol10.setForeground(new java.awt.Color(102, 102, 102));
+        jPriceCurrencySymbol10.setText("PHP");
+        jMensRingsPane.add(jPriceCurrencySymbol10, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 190, -1, -1));
+
+        jPriceSSR.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceSSR.setForeground(new java.awt.Color(102, 102, 102));
+        jPriceSSR.setText("1147.68");
+        jMensRingsPane.add(jPriceSSR, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 190, -1, -1));
+
+        jTitleSMR.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleSMR.setText("Sapphire Metal Ring");
+        jMensRingsPane.add(jTitleSMR, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 230, -1, -1));
+
+        jPriceCurrencySymbol9.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol9.setForeground(new java.awt.Color(102, 102, 102));
+        jPriceCurrencySymbol9.setText("PHP");
+        jMensRingsPane.add(jPriceCurrencySymbol9, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 190, -1, -1));
+
+        jPriceSMR.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceSMR.setForeground(new java.awt.Color(102, 102, 102));
+        jPriceSMR.setText("3726.00");
+        jMensRingsPane.add(jPriceSMR, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 190, -1, -1));
+
+        jTitleTR.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleTR.setText("Titanium Ring");
+        jMensRingsPane.add(jTitleTR, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 230, -1, -1));
+
+        jPriceCurrencySymbol8.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol8.setForeground(new java.awt.Color(102, 102, 102));
+        jPriceCurrencySymbol8.setText("PHP");
+        jMensRingsPane.add(jPriceCurrencySymbol8, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 190, -1, -1));
+
+        jPriceTR.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceTR.setForeground(new java.awt.Color(102, 102, 102));
+        jPriceTR.setText("724.20");
+        jMensRingsPane.add(jPriceTR, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 190, -1, -1));
+
+        jPriceGOR.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceGOR.setForeground(new java.awt.Color(102, 102, 102));
+        jPriceGOR.setText("762.40");
+        jMensRingsPane.add(jPriceGOR, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 190, -1, -1));
+
+        jPriceCurrencySymbol7.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol7.setForeground(new java.awt.Color(102, 102, 102));
+        jPriceCurrencySymbol7.setText("PHP");
+        jMensRingsPane.add(jPriceCurrencySymbol7, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 190, -1, -1));
+
+        jTitleGOR.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleGOR.setText("Golden Onyx Ring");
+        jMensRingsPane.add(jTitleGOR, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 230, -1, -1));
+
+        GoldOnyxRing.setForeground(new java.awt.Color(255, 255, 255));
+        GoldOnyxRing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/Gold Onyx Ring.png"))); // NOI18N
+        GoldOnyxRing.setText("R104");
+        GoldOnyxRing.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        GoldOnyxRing.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                GoldOnyxRingMouseClicked(evt);
+            }
+        });
+        jMensRingsPane.add(GoldOnyxRing, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, -1, -1));
+
+        titaniumRing.setForeground(new java.awt.Color(255, 255, 255));
+        titaniumRing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/titaniumRing.png"))); // NOI18N
+        titaniumRing.setText("R105");
+        titaniumRing.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        titaniumRing.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                titaniumRingMouseClicked(evt);
+            }
+        });
+        jMensRingsPane.add(titaniumRing, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 80, -1, -1));
+
+        SapphireMetalRing.setForeground(new java.awt.Color(255, 255, 255));
+        SapphireMetalRing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/Sapphire Metal Ring.png"))); // NOI18N
+        SapphireMetalRing.setText("R106");
+        SapphireMetalRing.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        SapphireMetalRing.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SapphireMetalRingMouseClicked(evt);
+            }
+        });
+        jMensRingsPane.add(SapphireMetalRing, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 70, -1, -1));
+
+        StainlessSteelRing.setForeground(new java.awt.Color(255, 255, 255));
+        StainlessSteelRing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/r1.png"))); // NOI18N
+        StainlessSteelRing.setText("R107");
+        StainlessSteelRing.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        StainlessSteelRing.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                StainlessSteelRingMouseClicked(evt);
+            }
+        });
+        jMensRingsPane.add(StainlessSteelRing, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 40, -1, -1));
+
+        ProductRingsPane.addTab("Men's", jMensRingsPane);
+
+        jWomensRingsPane.setBackground(new java.awt.Color(255, 255, 255));
+        jWomensRingsPane.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jTitleSDR.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleSDR.setText("Square Diamond Ring");
+        jWomensRingsPane.add(jTitleSDR, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 230, -1, -1));
+
+        jPriceCurrencySymbol13.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol13.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol13.setText("PHP");
+        jWomensRingsPane.add(jPriceCurrencySymbol13, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 190, -1, -1));
+
+        jPriceSDR.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceSDR.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceSDR.setText("34200.00");
+        jWomensRingsPane.add(jPriceSDR, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 190, -1, -1));
+
+        jTitleFDR.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleFDR.setText("Floral Diamond Ring");
+        jWomensRingsPane.add(jTitleFDR, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 230, -1, -1));
+
+        jPriceCurrencySymbol12.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol12.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol12.setText("PHP");
+        jWomensRingsPane.add(jPriceCurrencySymbol12, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 190, -1, -1));
+
+        jPriceFDR.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceFDR.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceFDR.setText("33926.00");
+        jWomensRingsPane.add(jPriceFDR, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 190, -1, -1));
+
+        jTitleCDR.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleCDR.setText("Classy Diamond Ring");
+        jWomensRingsPane.add(jTitleCDR, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 230, -1, -1));
+
+        jPriceCurrencySymbol11.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol11.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol11.setText("PHP");
+        jWomensRingsPane.add(jPriceCurrencySymbol11, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 190, -1, -1));
+
+        jPriceCDR.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCDR.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCDR.setText("21685.00");
+        jWomensRingsPane.add(jPriceCDR, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 190, -1, -1));
+
+        FloralDiamondRing.setForeground(new java.awt.Color(255, 255, 255));
+        FloralDiamondRing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/Diamond (2).png"))); // NOI18N
+        FloralDiamondRing.setText("R102");
+        FloralDiamondRing.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        FloralDiamondRing.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                FloralDiamondRingMouseClicked(evt);
+            }
+        });
+        jWomensRingsPane.add(FloralDiamondRing, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 30, -1, -1));
+
+        SquareDiamondRing.setForeground(new java.awt.Color(255, 255, 255));
+        SquareDiamondRing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/Diamond (4).png"))); // NOI18N
+        SquareDiamondRing.setText("R103");
+        SquareDiamondRing.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        SquareDiamondRing.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SquareDiamondRingMouseClicked(evt);
+            }
+        });
+        jWomensRingsPane.add(SquareDiamondRing, new org.netbeans.lib.awtextra.AbsoluteConstraints(630, 60, -1, -1));
+
+        DiamondRing1.setForeground(new java.awt.Color(255, 255, 255));
+        DiamondRing1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/Diamond (1).png"))); // NOI18N
+        DiamondRing1.setText("R101");
+        DiamondRing1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        DiamondRing1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DiamondRing1MouseClicked(evt);
+            }
+        });
+        jWomensRingsPane.add(DiamondRing1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 50, -1, -1));
+
+        ProductRingsPane.addTab("Women's", jWomensRingsPane);
+
+        javax.swing.GroupLayout jRingsPanelLayout = new javax.swing.GroupLayout(jRingsPanel);
+        jRingsPanel.setLayout(jRingsPanelLayout);
+        jRingsPanelLayout.setHorizontalGroup(
+            jRingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jRingsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ProductRingsPane)
+                .addContainerGap())
+        );
+        jRingsPanelLayout.setVerticalGroup(
+            jRingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jRingsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ProductRingsPane)
+                .addContainerGap())
+        );
+
+        ProductsPane.addTab("Rings", jRingsPanel);
+
+        jEarringsPanel.setBackground(new java.awt.Color(15, 45, 66));
+
+        ProductEarringsPane.setForeground(new java.awt.Color(255, 255, 255));
+
+        jMensEarringsPanel.setBackground(new java.awt.Color(255, 255, 255));
+        jMensEarringsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPriceRE.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceRE.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceRE.setText("699.00");
+        jMensEarringsPanel.add(jPriceRE, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 180, -1, -1));
+
+        jPriceCurrencySymbol17.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol17.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol17.setText("PHP");
+        jMensEarringsPanel.add(jPriceCurrencySymbol17, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 180, -1, -1));
+
+        jTitleRE.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleRE.setText("Rounded Earring");
+        jMensEarringsPanel.add(jTitleRE, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 230, -1, -1));
+
+        jPriceCE.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCE.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCE.setText("746.00");
+        jMensEarringsPanel.add(jPriceCE, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 180, -1, -1));
+
+        jPriceCurrencySymbol16.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol16.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol16.setText("PHP");
+        jMensEarringsPanel.add(jPriceCurrencySymbol16, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 180, -1, -1));
+
+        jTitleCE.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleCE.setText("Cross Earring");
+        jMensEarringsPanel.add(jTitleCE, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 230, -1, -1));
+
+        jPricePSE.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPricePSE.setForeground(new java.awt.Color(0, 0, 0));
+        jPricePSE.setText("499.00");
+        jMensEarringsPanel.add(jPricePSE, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 180, -1, -1));
+
+        jPriceCurrencySymbol15.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol15.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol15.setText("PHP");
+        jMensEarringsPanel.add(jPriceCurrencySymbol15, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 180, -1, -1));
+
+        jTitlePSE.setForeground(new java.awt.Color(0, 0, 0));
+        jTitlePSE.setText("Stud Earring");
+        jMensEarringsPanel.add(jTitlePSE, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 230, -1, -1));
+
+        jPriceCRE.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCRE.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCRE.setText("1699.00");
+        jMensEarringsPanel.add(jPriceCRE, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 180, -1, -1));
+
+        jPriceCurrencySymbol14.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol14.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol14.setText("PHP");
+        jMensEarringsPanel.add(jPriceCurrencySymbol14, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 180, -1, -1));
+
+        jTitleCRE.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleCRE.setText("Cross Rounded Earring");
+        jMensEarringsPanel.add(jTitleCRE, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 230, -1, -1));
+
+        CrossRoundedEarring.setForeground(new java.awt.Color(255, 255, 255));
+        CrossRoundedEarring.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/EarringMen (1).png"))); // NOI18N
+        CrossRoundedEarring.setText("E104");
+        CrossRoundedEarring.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        CrossRoundedEarring.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CrossRoundedEarringMouseClicked(evt);
+            }
+        });
+        jMensEarringsPanel.add(CrossRoundedEarring, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 30, 110, 190));
+
+        PlainStudEarring.setForeground(new java.awt.Color(255, 255, 255));
+        PlainStudEarring.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/EarringMen (2).png"))); // NOI18N
+        PlainStudEarring.setText("E105");
+        PlainStudEarring.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        PlainStudEarring.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                PlainStudEarringMouseClicked(evt);
+            }
+        });
+        jMensEarringsPanel.add(PlainStudEarring, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 40, -1, -1));
+
+        CrossEarring.setForeground(new java.awt.Color(255, 255, 255));
+        CrossEarring.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/EarringMen (3).png"))); // NOI18N
+        CrossEarring.setText("E106");
+        CrossEarring.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        CrossEarring.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CrossEarringMouseClicked(evt);
+            }
+        });
+        jMensEarringsPanel.add(CrossEarring, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 40, -1, -1));
+
+        RoundedEarring.setForeground(new java.awt.Color(255, 255, 255));
+        RoundedEarring.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/EarringMen (4).png"))); // NOI18N
+        RoundedEarring.setText("E107");
+        RoundedEarring.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        RoundedEarring.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                RoundedEarringMouseClicked(evt);
+            }
+        });
+        jMensEarringsPanel.add(RoundedEarring, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 70, -1, -1));
+
+        ProductEarringsPane.addTab("Men's", jMensEarringsPanel);
+
+        jWomensEarringsPanel.setBackground(new java.awt.Color(255, 255, 255));
+        jWomensEarringsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPriceWGOE.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceWGOE.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceWGOE.setText("9085.80");
+        jWomensEarringsPanel.add(jPriceWGOE, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 170, -1, -1));
+
+        jPriceCurrencySymbol20.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol20.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol20.setText("PHP");
+        jWomensEarringsPanel.add(jPriceCurrencySymbol20, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 170, -1, -1));
+
+        jTitleWGOE.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleWGOE.setText("White Gold Onyx Earring");
+        jWomensEarringsPanel.add(jTitleWGOE, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 220, -1, -1));
+
+        jPriceGAE.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceGAE.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceGAE.setText("2310.00");
+        jWomensEarringsPanel.add(jPriceGAE, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 170, -1, -1));
+
+        jPriceCurrencySymbol19.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol19.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol19.setText("PHP");
+        jWomensEarringsPanel.add(jPriceCurrencySymbol19, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 170, -1, -1));
+
+        jTitleGAE.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleGAE.setText("Golden Aquamarine Earring");
+        jWomensEarringsPanel.add(jTitleGAE, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 220, -1, -1));
+
+        jPriceSSE.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceSSE.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceSSE.setText("18790.00");
+        jWomensEarringsPanel.add(jPriceSSE, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 170, -1, -1));
+
+        jPriceCurrencySymbol18.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol18.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol18.setText("PHP");
+        jWomensEarringsPanel.add(jPriceCurrencySymbol18, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 170, -1, -1));
+
+        jTitleSSE.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleSSE.setText("Silver Sapphire Earring");
+        jWomensEarringsPanel.add(jTitleSSE, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 220, -1, -1));
+
+        SilverSapphireEarring.setForeground(new java.awt.Color(255, 255, 255));
+        SilverSapphireEarring.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/EarringWomen (1).png"))); // NOI18N
+        SilverSapphireEarring.setText("E101");
+        SilverSapphireEarring.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        SilverSapphireEarring.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                SilverSapphireEarringMouseClicked(evt);
+            }
+        });
+        jWomensEarringsPanel.add(SilverSapphireEarring, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 20, -1, -1));
+
+        GoldenAquamarine.setForeground(new java.awt.Color(255, 255, 255));
+        GoldenAquamarine.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/EarringWomen (2).png"))); // NOI18N
+        GoldenAquamarine.setText("E102");
+        GoldenAquamarine.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        GoldenAquamarine.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                GoldenAquamarineMouseClicked(evt);
+            }
+        });
+        jWomensEarringsPanel.add(GoldenAquamarine, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 40, -1, -1));
+
+        WhiteGoldOnyx.setForeground(new java.awt.Color(255, 255, 255));
+        WhiteGoldOnyx.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/EarringWomen (3).png"))); // NOI18N
+        WhiteGoldOnyx.setText("E103");
+        WhiteGoldOnyx.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        WhiteGoldOnyx.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                WhiteGoldOnyxMouseClicked(evt);
+            }
+        });
+        jWomensEarringsPanel.add(WhiteGoldOnyx, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 20, -1, -1));
+
+        ProductEarringsPane.addTab("Women's", jWomensEarringsPanel);
+
+        javax.swing.GroupLayout jEarringsPanelLayout = new javax.swing.GroupLayout(jEarringsPanel);
+        jEarringsPanel.setLayout(jEarringsPanelLayout);
+        jEarringsPanelLayout.setHorizontalGroup(
+            jEarringsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jEarringsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ProductEarringsPane)
+                .addContainerGap())
+        );
+        jEarringsPanelLayout.setVerticalGroup(
+            jEarringsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jEarringsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ProductEarringsPane)
+                .addContainerGap())
+        );
+
+        ProductsPane.addTab("Earrings", jEarringsPanel);
+
+        jWristPanel.setBackground(new java.awt.Color(15, 45, 66));
+
+        jBraceletsPane.setBackground(new java.awt.Color(255, 255, 255));
+        jBraceletsPane.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPricePB.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPricePB.setForeground(new java.awt.Color(0, 0, 0));
+        jPricePB.setText("437.80");
+        jBraceletsPane.add(jPricePB, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 170, -1, -1));
+
+        jTitlePB.setForeground(new java.awt.Color(0, 0, 0));
+        jTitlePB.setText("Punk's Bracelet");
+        jBraceletsPane.add(jTitlePB, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 220, -1, -1));
+
+        jPriceCurrencySymbol24.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol24.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol24.setText("PHP");
+        jBraceletsPane.add(jPriceCurrencySymbol24, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 170, -1, -1));
+
+        jPriceCCB.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCCB.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCCB.setText("26705.00");
+        jBraceletsPane.add(jPriceCCB, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 170, -1, -1));
+
+        jTitleCCB.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleCCB.setText("Cartier's Classic Bangle");
+        jBraceletsPane.add(jTitleCCB, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 220, -1, -1));
+
+        jPriceCurrencySymbol23.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol23.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol23.setText("PHP");
+        jBraceletsPane.add(jPriceCurrencySymbol23, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 170, -1, -1));
+
+        jPriceCMBB.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCMBB.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCMBB.setText("1291.14");
+        jBraceletsPane.add(jPriceCMBB, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 170, -1, -1));
+
+        jPriceCurrencySymbol22.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol22.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol22.setText("PHP");
+        jBraceletsPane.add(jPriceCurrencySymbol22, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 170, -1, -1));
+
+        jTitleCMBB.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleCMBB.setText("Classy Matte Black Bracelet");
+        jBraceletsPane.add(jTitleCMBB, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 220, -1, -1));
+
+        jPriceHB.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceHB.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceHB.setText("4200.00");
+        jBraceletsPane.add(jPriceHB, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 170, -1, -1));
+
+        jPriceCurrencySymbol21.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol21.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol21.setText("PHP");
+        jBraceletsPane.add(jPriceCurrencySymbol21, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 170, -1, -1));
+
+        jTitleHB.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleHB.setText("Tiffany's Hinged Bangle");
+        jBraceletsPane.add(jTitleHB, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 220, -1, -1));
+
+        PunkyBracelet.setForeground(new java.awt.Color(255, 255, 255));
+        PunkyBracelet.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/B punky.png"))); // NOI18N
+        PunkyBracelet.setText("B104");
+        PunkyBracelet.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        PunkyBracelet.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                PunkyBraceletMouseClicked(evt);
+            }
+        });
+        jBraceletsPane.add(PunkyBracelet, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 90, -1, -1));
+
+        HingedBangle.setForeground(new java.awt.Color(255, 255, 255));
+        HingedBangle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/B Tiffany tt1 Hinged bangle.png"))); // NOI18N
+        HingedBangle.setText("B101");
+        HingedBangle.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        HingedBangle.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                HingedBangleMouseClicked(evt);
+            }
+        });
+        jBraceletsPane.add(HingedBangle, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, -1, -1));
+
+        Bangle.setForeground(new java.awt.Color(255, 255, 255));
+        Bangle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/B bangle.png"))); // NOI18N
+        Bangle.setText("B103");
+        Bangle.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        Bangle.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BangleMouseClicked(evt);
+            }
+        });
+        jBraceletsPane.add(Bangle, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 110, -1, -1));
+
+        ClassyMatteBlack.setForeground(new java.awt.Color(255, 255, 255));
+        ClassyMatteBlack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/B matte black classy.png"))); // NOI18N
+        ClassyMatteBlack.setText("B102");
+        ClassyMatteBlack.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ClassyMatteBlack.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ClassyMatteBlackMouseClicked(evt);
+            }
+        });
+        jBraceletsPane.add(ClassyMatteBlack, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 110, -1, -1));
+
+        jTabbedPane1.addTab("Bracelets", jBraceletsPane);
+
+        jWatchPane.setBackground(new java.awt.Color(255, 255, 255));
+        jWatchPane.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPriceMKCLW.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceMKCLW.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceMKCLW.setText("6646.98");
+        jWatchPane.add(jPriceMKCLW, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 190, -1, -1));
+
+        jPriceCurrencySymbol28.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol28.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol28.setText("PHP");
+        jWatchPane.add(jPriceCurrencySymbol28, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 190, -1, -1));
+
+        jTitleMKCLW.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleMKCLW.setText("Michael Kors' Classic Leather Watch");
+        jWatchPane.add(jTitleMKCLW, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 240, -1, -1));
+
+        jTitleFSBW.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleFSBW.setText("Fossil's Silver Blue Watch");
+        jWatchPane.add(jTitleFSBW, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 240, -1, -1));
+
+        jPriceFSBW.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceFSBW.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceFSBW.setText("4305.57");
+        jWatchPane.add(jPriceFSBW, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 190, -1, -1));
+
+        jPriceCurrencySymbol27.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol27.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol27.setText("PHP");
+        jWatchPane.add(jPriceCurrencySymbol27, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 190, -1, -1));
+
+        jPriceFSW.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceFSW.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceFSW.setText("4305.57");
+        jWatchPane.add(jPriceFSW, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 190, -1, -1));
+
+        jPriceCurrencySymbol26.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol26.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol26.setText("PHP");
+        jWatchPane.add(jPriceCurrencySymbol26, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 190, -1, -1));
+
+        jTitleFSW.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleFSW.setText("Fossil Classic Silver Watch");
+        jWatchPane.add(jTitleFSW, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 240, -1, -1));
+
+        jPriceDW.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceDW.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceDW.setText("2750.00");
+        jWatchPane.add(jPriceDW, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 190, -1, -1));
+
+        jPriceCurrencySymbol25.setFont(new java.awt.Font("Ebrima", 1, 18)); // NOI18N
+        jPriceCurrencySymbol25.setForeground(new java.awt.Color(0, 0, 0));
+        jPriceCurrencySymbol25.setText("PHP");
+        jWatchPane.add(jPriceCurrencySymbol25, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 190, -1, -1));
+
+        jTitleDW.setForeground(new java.awt.Color(0, 0, 0));
+        jTitleDW.setText("Didier's Leather Watch");
+        jWatchPane.add(jTitleDW, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 240, -1, -1));
+
+        ClassyLeather.setForeground(new java.awt.Color(255, 255, 255));
+        ClassyLeather.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/W MK7099_mainLeather.png"))); // NOI18N
+        ClassyLeather.setText("W104");
+        ClassyLeather.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        ClassyLeather.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ClassyLeatherMouseClicked(evt);
+            }
+        });
+        jWatchPane.add(ClassyLeather, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 0, -1, 280));
+
+        Didier.setForeground(new java.awt.Color(255, 255, 255));
+        Didier.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/W Didier.png"))); // NOI18N
+        Didier.setText("W101");
+        Didier.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        Didier.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                DidierMouseClicked(evt);
+            }
+        });
+        jWatchPane.add(Didier, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
+
+        FossilSilver.setForeground(new java.awt.Color(255, 255, 255));
+        FossilSilver.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/W FOSSIL , CH2600IE.png"))); // NOI18N
+        FossilSilver.setText("W102");
+        FossilSilver.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        FossilSilver.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                FossilSilverMouseClicked(evt);
+            }
+        });
+        jWatchPane.add(FossilSilver, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 10, -1, -1));
+
+        FossilBlue.setForeground(new java.awt.Color(255, 255, 255));
+        FossilBlue.setIcon(new javax.swing.ImageIcon(getClass().getResource("/online_shopping_system/Assets/W FS5623_main.png"))); // NOI18N
+        FossilBlue.setText("W103");
+        FossilBlue.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        FossilBlue.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                FossilBlueMouseClicked(evt);
+            }
+        });
+        jWatchPane.add(FossilBlue, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 10, -1, -1));
+
+        jTabbedPane1.addTab("Watches", jWatchPane);
+
+        javax.swing.GroupLayout jWristPanelLayout = new javax.swing.GroupLayout(jWristPanel);
+        jWristPanel.setLayout(jWristPanelLayout);
+        jWristPanelLayout.setHorizontalGroup(
+            jWristPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jWristPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jTabbedPane1)
+                .addContainerGap())
+        );
+        jWristPanelLayout.setVerticalGroup(
+            jWristPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jWristPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jTabbedPane1)
+                .addContainerGap())
+        );
+
+        ProductsPane.addTab("Wrist Accessories", jWristPanel);
+
+        ProductsPanel.add(ProductsPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 880, 350));
+
+        ProductLabel.setFont(new java.awt.Font("Elephant", 0, 24)); // NOI18N
+        ProductLabel.setForeground(new java.awt.Color(255, 255, 255));
+        ProductLabel.setText("JEWELRY PRODUCTS");
+        ProductsPanel.add(ProductLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 30, -1, -1));
+
+        jlblPtoCart.setBackground(new java.awt.Color(255, 255, 255));
+        jlblPtoCart.setFont(new java.awt.Font("Elephant", 0, 12)); // NOI18N
+        jlblPtoCart.setForeground(new java.awt.Color(255, 255, 255));
+        jlblPtoCart.setText("Proceed to Cart");
+        jlblPtoCart.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlblPtoCart.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlblPtoCartMouseClicked(evt);
+            }
+        });
+        ProductsPanel.add(jlblPtoCart, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 40, -1, -1));
+
+        IDNUMBER.setBackground(new java.awt.Color(15, 45, 66));
+        IDNUMBER.setForeground(new java.awt.Color(108, 122, 137));
+        IDNUMBER.setText("IDDETAILS");
+        ProductsPanel.add(IDNUMBER, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70, -1, -1));
+
+        CartPanel.setBackground(new java.awt.Color(108, 122, 137));
+        CartPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(102, 102, 102), null));
+        CartPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        HiddenCartID.setEditable(false);
+        HiddenCartID.setBackground(new java.awt.Color(108, 122, 137));
+        HiddenCartID.setForeground(new java.awt.Color(108, 122, 137));
+        HiddenCartID.setText("CART_ID");
+        HiddenCartID.setBorder(null);
+        CartPanel.add(HiddenCartID, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 380, 60, -1));
+
+        HiddenCrementationQuantity.setEditable(false);
+        HiddenCrementationQuantity.setBackground(new java.awt.Color(108, 122, 137));
+        HiddenCrementationQuantity.setForeground(new java.awt.Color(108, 122, 137));
+        HiddenCrementationQuantity.setText("1");
+        HiddenCrementationQuantity.setBorder(null);
+        CartPanel.add(HiddenCrementationQuantity, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 400, 60, -1));
+
+        HiddenProductID.setEditable(false);
+        HiddenProductID.setBackground(new java.awt.Color(108, 122, 137));
+        HiddenProductID.setForeground(new java.awt.Color(108, 122, 137));
+        HiddenProductID.setText("PROD_ID");
+        HiddenProductID.setBorder(null);
+        CartPanel.add(HiddenProductID, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 380, 60, -1));
+
+        HiddenCartQuantity.setEditable(false);
+        HiddenCartQuantity.setBackground(new java.awt.Color(108, 122, 137));
+        HiddenCartQuantity.setForeground(new java.awt.Color(108, 122, 137));
+        HiddenCartQuantity.setBorder(null);
+        CartPanel.add(HiddenCartQuantity, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 400, 60, -1));
+
+        cartInc.setText("+");
+        cartInc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cartIncActionPerformed(evt);
+            }
+        });
+        CartPanel.add(cartInc, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 300, 50, -1));
+
+        cartDec.setText("-");
+        cartDec.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cartDecActionPerformed(evt);
+            }
+        });
+        CartPanel.add(cartDec, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 300, 50, -1));
+
+        cartTotal.setEditable(false);
+        cartTotal.setBackground(new java.awt.Color(214, 217, 223));
+        cartTotal.setForeground(new java.awt.Color(0, 0, 0));
+        cartTotal.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        cartTotal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        CartPanel.add(cartTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 350, 120, 20));
+
+        ttlTotal.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
+        ttlTotal.setText("TOTAL: ");
+        CartPanel.add(ttlTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 340, -1, 40));
+
+        CartLabel.setFont(new java.awt.Font("Elephant", 0, 24)); // NOI18N
+        CartLabel.setForeground(new java.awt.Color(255, 255, 255));
+        CartLabel.setText("JEWELRY CART");
+        CartPanel.add(CartLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 30, -1, -1));
+
+        cartTable.setAutoCreateRowSorter(true);
+        cartTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Item Number", "ID", "Name", "Price", "Quantity"
+            }
+        ));
+        cartTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cartTableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(cartTable);
+
+        CartPanel.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 80, 850, 260));
+
+        cartProceedBtn.setBackground(new java.awt.Color(0, 102, 204));
+        cartProceedBtn.setForeground(new java.awt.Color(255, 255, 255));
+        cartProceedBtn.setText("Proceed");
+        cartProceedBtn.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        cartProceedBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cartProceedBtnActionPerformed(evt);
+            }
+        });
+        CartPanel.add(cartProceedBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(810, 390, 84, -1));
+
+        cartChkoutBtn.setBackground(new java.awt.Color(0, 102, 204));
+        cartChkoutBtn.setForeground(new java.awt.Color(255, 255, 255));
+        cartChkoutBtn.setText("Checkout");
+        cartChkoutBtn.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        cartChkoutBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cartChkoutBtnActionPerformed(evt);
+            }
+        });
+        CartPanel.add(cartChkoutBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 390, 84, -1));
+
+        jlblBtoProd.setBackground(new java.awt.Color(255, 255, 255));
+        jlblBtoProd.setFont(new java.awt.Font("Elephant", 0, 12)); // NOI18N
+        jlblBtoProd.setForeground(new java.awt.Color(255, 255, 255));
+        jlblBtoProd.setText("Back to Products");
+        jlblBtoProd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jlblBtoProd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jlblBtoProdMouseClicked(evt);
+            }
+        });
+        CartPanel.add(jlblBtoProd, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 40, -1, -1));
+
+        removeButton.setBackground(new java.awt.Color(0, 102, 204));
+        removeButton.setForeground(new java.awt.Color(255, 255, 255));
+        removeButton.setText("Remove");
+        removeButton.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        removeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeButtonActionPerformed(evt);
+            }
+        });
+        CartPanel.add(removeButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 390, 80, -1));
+
+        Amount.setEditable(false);
+        Amount.setBackground(new java.awt.Color(108, 122, 137));
+        Amount.setForeground(new java.awt.Color(108, 122, 137));
+        Amount.setBorder(null);
+        CartPanel.add(Amount, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 410, 80, -1));
+
+        CartID.setEditable(false);
+        CartID.setBackground(new java.awt.Color(108, 122, 137));
+        CartID.setForeground(new java.awt.Color(108, 122, 137));
+        CartID.setBorder(null);
+        CartPanel.add(CartID, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 350, 80, -1));
+
+        ProdID.setEditable(false);
+        ProdID.setBackground(new java.awt.Color(108, 122, 137));
+        ProdID.setForeground(new java.awt.Color(108, 122, 137));
+        ProdID.setBorder(null);
+        CartPanel.add(ProdID, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 380, 80, -1));
+
+        CustID.setEditable(false);
+        CustID.setBackground(new java.awt.Color(108, 122, 137));
+        CustID.setForeground(new java.awt.Color(108, 122, 137));
+        CustID.setBorder(null);
+        CartPanel.add(CustID, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 350, 80, -1));
+
+        SFee.setEditable(false);
+        SFee.setBackground(new java.awt.Color(108, 122, 137));
+        SFee.setForeground(new java.awt.Color(108, 122, 137));
+        SFee.setText("41.50");
+        SFee.setBorder(null);
+        CartPanel.add(SFee, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 380, 80, -1));
+
+        CAddress.setEditable(false);
+        CAddress.setBackground(new java.awt.Color(108, 122, 137));
+        CAddress.setForeground(new java.awt.Color(108, 122, 137));
+        CAddress.setBorder(null);
+        CartPanel.add(CAddress, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 410, 80, -1));
+
+        ProdName.setEditable(false);
+        ProdName.setBackground(new java.awt.Color(108, 122, 137));
+        ProdName.setForeground(new java.awt.Color(108, 122, 137));
+        ProdName.setBorder(null);
+        CartPanel.add(ProdName, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 350, 80, -1));
+
+        PQuant.setEditable(false);
+        PQuant.setBackground(new java.awt.Color(108, 122, 137));
+        PQuant.setForeground(new java.awt.Color(108, 122, 137));
+        PQuant.setBorder(null);
+        CartPanel.add(PQuant, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 380, 80, -1));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(HeadPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 926, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(ProductsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(CartPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 926, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(HeadPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ProductsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(CartPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
+
+        pack();
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+private JFrame frame;
+    private void jCloseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCloseButtonActionPerformed
+        frame = new JFrame("Close");
+        if (JOptionPane.showConfirmDialog(frame, "Are you sure you want to exit?", "Online Shopping",
+                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
+    }//GEN-LAST:event_jCloseButtonActionPerformed
+
+    private void jMinimizeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMinimizeButtonActionPerformed
+        this.setState(frame.ICONIFIED);
+    }//GEN-LAST:event_jMinimizeButtonActionPerformed
+
+    private void jLogoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLogoutBtnActionPerformed
+        frame = new JFrame("LogOut!");
+        if (JOptionPane.showConfirmDialog(frame, "Are you sure you want to logout?", "Online Shopping",
+                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            LoginSystem ls = new LoginSystem();
+            ls.setVisible(true);
+            ls.setLocationRelativeTo(this);
+            this.dispose();
+        }
+    }//GEN-LAST:event_jLogoutBtnActionPerformed
+
+    private void DiamondChokerNecklaceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DiamondChokerNecklaceMouseClicked
+        IDNUMBER.setText(DiamondChokerNecklace.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/DiamondChokerNecklace - Copy.png")));
+    }//GEN-LAST:event_DiamondChokerNecklaceMouseClicked
+
+    private void jlblPtoCartMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlblPtoCartMouseClicked
+        CartPanel.setVisible(true);
+        ProductsPanel.setVisible(false);
+        cartTable();
+        totalCartTable();
+    }//GEN-LAST:event_jlblPtoCartMouseClicked
+
+    private void LinkGoldNecklaceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LinkGoldNecklaceMouseClicked
+        IDNUMBER.setText(LinkGoldNecklace.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/LinkGoldNecklace - Copy.png")));
+    }//GEN-LAST:event_LinkGoldNecklaceMouseClicked
+
+    private void ObsidianChainNecklaceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ObsidianChainNecklaceMouseClicked
+        IDNUMBER.setText(ObsidianChainNecklace.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/ObsidianChainNecklace - Copy.png")));
+    }//GEN-LAST:event_ObsidianChainNecklaceMouseClicked
+
+    private void SilverChainNecklaceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SilverChainNecklaceMouseClicked
+        IDNUMBER.setText(SilverChainNecklace.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/SilverChainNecklace - Copy.png")));
+    }//GEN-LAST:event_SilverChainNecklaceMouseClicked
+
+    private void BALLCHAINNECKLACEMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BALLCHAINNECKLACEMouseClicked
+        IDNUMBER.setText(BALLCHAINNECKLACE.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/BALL CHAIN NECKLACE - Copy.png")));
+    }//GEN-LAST:event_BALLCHAINNECKLACEMouseClicked
+
+    private void TOUISSANTDIAMONDNECKLACEMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TOUISSANTDIAMONDNECKLACEMouseClicked
+        IDNUMBER.setText(TOUISSANTDIAMONDNECKLACE.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/TOUISSANT DIAMOND NECKLACE - Copy.png")));
+    }//GEN-LAST:event_TOUISSANTDIAMONDNECKLACEMouseClicked
+
+    private void EMERALDGOLDENCHOKERMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_EMERALDGOLDENCHOKERMouseClicked
+        IDNUMBER.setText(EMERALDGOLDENCHOKER.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/EMERALD GOLDEN CHOKER - Copy.png")));
+    }//GEN-LAST:event_EMERALDGOLDENCHOKERMouseClicked
+
+    private void GoldOnyxRingMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GoldOnyxRingMouseClicked
+        IDNUMBER.setText(GoldOnyxRing.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/Gold Onyx Ring.png")));
+    }//GEN-LAST:event_GoldOnyxRingMouseClicked
+
+    private void titaniumRingMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_titaniumRingMouseClicked
+        IDNUMBER.setText(titaniumRing.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/titaniumRing.png")));
+    }//GEN-LAST:event_titaniumRingMouseClicked
+
+    private void SapphireMetalRingMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SapphireMetalRingMouseClicked
+        IDNUMBER.setText(SapphireMetalRing.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/Sapphire Metal Ring.png")));
+    }//GEN-LAST:event_SapphireMetalRingMouseClicked
+
+    private void StainlessSteelRingMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_StainlessSteelRingMouseClicked
+        IDNUMBER.setText(StainlessSteelRing.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/r1.png")));
+    }//GEN-LAST:event_StainlessSteelRingMouseClicked
+
+    private void DiamondRing1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DiamondRing1MouseClicked
+        IDNUMBER.setText(DiamondRing1.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/Diamond (1).png")));
+    }//GEN-LAST:event_DiamondRing1MouseClicked
+
+    private void FloralDiamondRingMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FloralDiamondRingMouseClicked
+        IDNUMBER.setText(FloralDiamondRing.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/Diamond (2).png")));
+    }//GEN-LAST:event_FloralDiamondRingMouseClicked
+
+    private void SquareDiamondRingMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SquareDiamondRingMouseClicked
+        IDNUMBER.setText(SquareDiamondRing.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/Diamond (4).png")));
+    }//GEN-LAST:event_SquareDiamondRingMouseClicked
+
+    private void SilverSapphireEarringMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_SilverSapphireEarringMouseClicked
+        IDNUMBER.setText(SilverSapphireEarring.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/EarringWomen (1).png")));
+    }//GEN-LAST:event_SilverSapphireEarringMouseClicked
+
+    private void GoldenAquamarineMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_GoldenAquamarineMouseClicked
+        IDNUMBER.setText(GoldenAquamarine.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/EarringWomen (2).png")));
+    }//GEN-LAST:event_GoldenAquamarineMouseClicked
+
+    private void WhiteGoldOnyxMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_WhiteGoldOnyxMouseClicked
+        IDNUMBER.setText(WhiteGoldOnyx.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/EarringWomen (3).png")));
+    }//GEN-LAST:event_WhiteGoldOnyxMouseClicked
+
+    private void CrossRoundedEarringMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CrossRoundedEarringMouseClicked
+        IDNUMBER.setText(CrossRoundedEarring.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/EarringMen (1).png")));
+    }//GEN-LAST:event_CrossRoundedEarringMouseClicked
+
+    private void PlainStudEarringMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PlainStudEarringMouseClicked
+        IDNUMBER.setText(PlainStudEarring.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/EarringMen (2).png")));
+    }//GEN-LAST:event_PlainStudEarringMouseClicked
+
+    private void CrossEarringMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CrossEarringMouseClicked
+        IDNUMBER.setText(CrossEarring.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/EarringMen (3).png")));
+    }//GEN-LAST:event_CrossEarringMouseClicked
+
+    private void RoundedEarringMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RoundedEarringMouseClicked
+        IDNUMBER.setText(RoundedEarring.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/EarringMen (4).png")));
+    }//GEN-LAST:event_RoundedEarringMouseClicked
+
+    private void HingedBangleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HingedBangleMouseClicked
+        IDNUMBER.setText(HingedBangle.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/B Tiffany tt1 Hinged bangle.png")));
+    }//GEN-LAST:event_HingedBangleMouseClicked
+
+    private void ClassyMatteBlackMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ClassyMatteBlackMouseClicked
+        IDNUMBER.setText(ClassyMatteBlack.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/B matte black classy.png")));
+    }//GEN-LAST:event_ClassyMatteBlackMouseClicked
+
+    private void BangleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BangleMouseClicked
+        IDNUMBER.setText(Bangle.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/B bangle.png")));
+    }//GEN-LAST:event_BangleMouseClicked
+
+    private void PunkyBraceletMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_PunkyBraceletMouseClicked
+        IDNUMBER.setText(PunkyBracelet.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/B punky.png")));
+    }//GEN-LAST:event_PunkyBraceletMouseClicked
+
+    private void DidierMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DidierMouseClicked
+        IDNUMBER.setText(Didier.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/W Didier.png")));
+    }//GEN-LAST:event_DidierMouseClicked
+
+    private void FossilSilverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FossilSilverMouseClicked
+        IDNUMBER.setText(FossilSilver.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/W FOSSIL , CH2600IE.png")));
+    }//GEN-LAST:event_FossilSilverMouseClicked
+
+    private void FossilBlueMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FossilBlueMouseClicked
+        IDNUMBER.setText(FossilBlue.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/W FS5623_main.png")));
+    }//GEN-LAST:event_FossilBlueMouseClicked
+
+    private void ClassyLeatherMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ClassyLeatherMouseClicked
+        IDNUMBER.setText(ClassyLeather.getText());
+        productTable();
+        AddtoCart.jIMG.setIcon(new javax.swing.ImageIcon(getClass()
+                .getResource("/online_shopping_system/Assets/W MK7099_mainLeather.png")));
+    }//GEN-LAST:event_ClassyLeatherMouseClicked
+
+    private void cartProceedBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cartProceedBtnActionPerformed
+        paymentTable pt = new paymentTable();
+        pt.setVisible(true);
+    }//GEN-LAST:event_cartProceedBtnActionPerformed
+
+    private void jlblBtoProdMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jlblBtoProdMouseClicked
+        CartPanel.setVisible(false);
+        ProductsPanel.setVisible(true);
+    }//GEN-LAST:event_jlblBtoProdMouseClicked
+
+    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
+        try {
+            int SelectedRowIndex = cartTable.getSelectedRow();
+            DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
+            model.removeRow(SelectedRowIndex);
+            model.setRowCount(0);
+
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            ps = conn.prepareStatement("DELETE FROM CART WHERE cart_id = ?");
+
+            ps.setString(1, HiddenCartID.getText());
+
+            if (ps.executeUpdate() != 0) {
+                JOptionPane.showMessageDialog(null, "item deleted successfully!");
+                ps = conn.prepareStatement("UPDATE product SET product_stock = product_stock + ? WHERE product_id = ?");
+
+                ps.setString(1, HiddenCartQuantity.getText());
+                ps.setString(2, HiddenProductID.getText());
+
+                ps.executeUpdate();
+            } else {
+                JOptionPane.showMessageDialog(null, "item is not deleted!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+        }
+        cartTable();
+        totalCartTable();
+    }//GEN-LAST:event_removeButtonActionPerformed
+
+    private void cartChkoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cartChkoutBtnActionPerformed
+        try {
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            ps = conn.prepareStatement("INSERT INTO payment "
+                    + "(PAYMENT_AMOUNT, ADDRESS_ID, PRODUCT_ID, PRODUCT_NAME, CUSTOMER_ID, PRODUCT_QUANTITY) "
+                    + "VALUES (?,?,?,?,?,?)");
+
+            ps.setString(1, Amount.getText());
+            ps.setString(2, CAddress.getText());
+            ps.setString(3, ProdID.getText());
+            ps.setString(4, ProdName.getText());
+            ps.setString(5, CustID.getText());
+            ps.setString(6, PQuant.getText());
+
+            int c = ps.executeUpdate();
+
+            if (c != 0) {
+                JOptionPane.showMessageDialog(null, "Added to payment!");
+                ps = conn.prepareStatement("DELETE FROM CART WHERE cart_id = ?");
+
+                ps.setString(1, CartID.getText());
+
+                ps.executeUpdate();
+            } else {
+                JOptionPane.showMessageDialog(null, "Failed to add to payment!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Please select a product in table before checking out");
+        }
+        cartTable();
+        totalCartTable();
+    }//GEN-LAST:event_cartChkoutBtnActionPerformed
+
+    private void cartTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cartTableMouseClicked
+        try {
+            RecordTable = (DefaultTableModel) cartTable.getModel();
+            int SelectedRows = cartTable.getSelectedRow();
+
+            HiddenCartID.setText(RecordTable.getValueAt(SelectedRows, 0).toString());
+            HiddenProductID.setText(RecordTable.getValueAt(SelectedRows, 1).toString());
+            HiddenCartQuantity.setText(RecordTable.getValueAt(SelectedRows, 4).toString());
+
+            CustID.setText(lblID.getText());
+            CartID.setText(HiddenCartID.getText());
+            ProdID.setText(RecordTable.getValueAt(SelectedRows, 1).toString());
+            ProdName.setText(RecordTable.getValueAt(SelectedRows, 2).toString());
+            PQuant.setText(HiddenCartQuantity.getText());
+            Amount.setText(RecordTable.getValueAt(SelectedRows, 3).toString());
+//            Amount being called from total
+//            CAddress taken into login system
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Table Don't Exists", "Empty Table!", 0);
+        }
+    }//GEN-LAST:event_cartTableMouseClicked
+    private static int num = 1;
+    private void cartIncActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cartIncActionPerformed
+        HiddenCrementationQuantity.setText("" + num);
+        try {
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            ps = conn.prepareStatement("UPDATE cart SET cart_quant = cart_quant + ? WHERE cart_id = ?");
+
+            ps.setString(1, HiddenCrementationQuantity.getText());
+            ps.setString(2, HiddenCartID.getText());
+
+            int c = ps.executeUpdate();
+
+            if (c != 0) {
+                ps = conn.prepareStatement("UPDATE product SET product_stock = product_stock - ? WHERE product_id = ?");
+
+                ps.setString(1, HiddenCrementationQuantity.getText());
+                ps.setString(2, HiddenProductID.getText());
+
+                ps.executeUpdate();
+            } else {
+                JOptionPane.showMessageDialog(null, "Error in table!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Table Don't Exists", "Empty Table!", 0);
+        }
+        cartTable();
+        totalCartTable();
+    }//GEN-LAST:event_cartIncActionPerformed
+
+    private void cartDecActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cartDecActionPerformed
+        HiddenCrementationQuantity.setText("" + num);
+        try {
+            conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            ps = conn.prepareStatement("UPDATE cart SET cart_quant = cart_quant - ? WHERE cart_id = ?");
+
+            ps.setString(1, HiddenCrementationQuantity.getText());
+            ps.setString(2, HiddenCartID.getText());
+
+            int c = ps.executeUpdate();
+
+            if (c != 0) {
+                ps = conn.prepareStatement("UPDATE product SET product_stock = product_stock + ? WHERE product_id = ?");
+
+                ps.setString(1, HiddenCrementationQuantity.getText());
+                ps.setString(2, HiddenProductID.getText());
+
+                ps.executeUpdate();
+            } else {
+                JOptionPane.showMessageDialog(null, "Error in table!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Table Don't Exists", "Empty Table!", 0);
+        }
+        cartTable();
+        totalCartTable();
+    }//GEN-LAST:event_cartDecActionPerformed
+
+    private void HeadPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HeadPanelMousePressed
+        xMouse = evt.getX();
+        yMouse = evt.getY();
+    }//GEN-LAST:event_HeadPanelMousePressed
+
+    private void HeadPanelMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HeadPanelMouseDragged
+        int x = evt.getXOnScreen();
+        int y = evt.getYOnScreen();
+        this.setLocation(x - xMouse, y - yMouse);
+    }//GEN-LAST:event_HeadPanelMouseDragged
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(JPsOnlineShopping.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(JPsOnlineShopping.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(JPsOnlineShopping.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(JPsOnlineShopping.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new JPsOnlineShopping().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    public static javax.swing.JTextField Amount;
+    public static javax.swing.JLabel BALLCHAINNECKLACE;
+    private javax.swing.JLabel Bangle;
+    public static javax.swing.JTextField CAddress;
+    public static javax.swing.JTextField CartID;
+    private javax.swing.JLabel CartLabel;
+    private javax.swing.JPanel CartPanel;
+    private javax.swing.JLabel ClassyLeather;
+    private javax.swing.JLabel ClassyMatteBlack;
+    private javax.swing.JLabel CrossEarring;
+    private javax.swing.JLabel CrossRoundedEarring;
+    public static javax.swing.JTextField CustID;
+    public static javax.swing.JLabel DiamondChokerNecklace;
+    public static javax.swing.JLabel DiamondRing1;
+    private javax.swing.JLabel Didier;
+    public static javax.swing.JLabel EMERALDGOLDENCHOKER;
+    public static javax.swing.JLabel FloralDiamondRing;
+    private javax.swing.JLabel FossilBlue;
+    private javax.swing.JLabel FossilSilver;
+    public static javax.swing.JLabel GoldOnyxRing;
+    private javax.swing.JLabel GoldenAquamarine;
+    private javax.swing.JLabel HeadLabel;
+    private javax.swing.JPanel HeadPanel;
+    private javax.swing.JTextField HiddenCartID;
+    private javax.swing.JTextField HiddenCartQuantity;
+    private javax.swing.JTextField HiddenCrementationQuantity;
+    private javax.swing.JTextField HiddenProductID;
+    private javax.swing.JLabel HingedBangle;
+    private javax.swing.JLabel IDNUMBER;
+    public static javax.swing.JLabel LinkGoldNecklace;
+    public static javax.swing.JLabel ObsidianChainNecklace;
+    public static javax.swing.JTextField PQuant;
+    private javax.swing.JLabel PlainStudEarring;
+    public static javax.swing.JTextField ProdID;
+    public static javax.swing.JTextField ProdName;
+    private javax.swing.JTabbedPane ProductEarringsPane;
+    private javax.swing.JLabel ProductLabel;
+    private javax.swing.JTabbedPane ProductNecklacePane;
+    private javax.swing.JTabbedPane ProductRingsPane;
+    private javax.swing.JTabbedPane ProductsPane;
+    private javax.swing.JPanel ProductsPanel;
+    private javax.swing.JLabel PunkyBracelet;
+    private javax.swing.JLabel RoundedEarring;
+    public static javax.swing.JTextField SFee;
+    public static javax.swing.JLabel SapphireMetalRing;
+    public static javax.swing.JLabel SilverChainNecklace;
+    private javax.swing.JLabel SilverSapphireEarring;
+    public static javax.swing.JLabel SquareDiamondRing;
+    public static javax.swing.JLabel StainlessSteelRing;
+    public static javax.swing.JLabel TOUISSANTDIAMONDNECKLACE;
+    public static javax.swing.JLabel WelcomeUser;
+    private javax.swing.JLabel WhiteGoldOnyx;
+    private javax.swing.JButton cartChkoutBtn;
+    private javax.swing.JButton cartDec;
+    private javax.swing.JButton cartInc;
+    private javax.swing.JButton cartProceedBtn;
+    private javax.swing.JTable cartTable;
+    private javax.swing.JTextField cartTotal;
+    private javax.swing.JLabel forLockAspect;
+    private javax.swing.JPanel jBraceletsPane;
+    private javax.swing.JButton jCloseButton;
+    private javax.swing.JPanel jEarringsPanel;
+    private javax.swing.JButton jLogoutBtn;
+    private javax.swing.JPanel jMensEarringsPanel;
+    private javax.swing.JPanel jMensNecklacePanel;
+    private javax.swing.JPanel jMensRingsPane;
+    private javax.swing.JButton jMinimizeButton;
+    private javax.swing.JPanel jNecklacesPanel;
+    public static javax.swing.JLabel jPriceBCN;
+    public static javax.swing.JLabel jPriceCCB;
+    public static javax.swing.JLabel jPriceCDR;
+    public static javax.swing.JLabel jPriceCE;
+    public static javax.swing.JLabel jPriceCMBB;
+    public static javax.swing.JLabel jPriceCRE;
+    private javax.swing.JLabel jPriceCurrencySymbol;
+    private javax.swing.JLabel jPriceCurrencySymbol1;
+    private javax.swing.JLabel jPriceCurrencySymbol10;
+    private javax.swing.JLabel jPriceCurrencySymbol11;
+    private javax.swing.JLabel jPriceCurrencySymbol12;
+    private javax.swing.JLabel jPriceCurrencySymbol13;
+    private javax.swing.JLabel jPriceCurrencySymbol14;
+    private javax.swing.JLabel jPriceCurrencySymbol15;
+    private javax.swing.JLabel jPriceCurrencySymbol16;
+    private javax.swing.JLabel jPriceCurrencySymbol17;
+    private javax.swing.JLabel jPriceCurrencySymbol18;
+    private javax.swing.JLabel jPriceCurrencySymbol19;
+    private javax.swing.JLabel jPriceCurrencySymbol2;
+    private javax.swing.JLabel jPriceCurrencySymbol20;
+    private javax.swing.JLabel jPriceCurrencySymbol21;
+    private javax.swing.JLabel jPriceCurrencySymbol22;
+    private javax.swing.JLabel jPriceCurrencySymbol23;
+    private javax.swing.JLabel jPriceCurrencySymbol24;
+    private javax.swing.JLabel jPriceCurrencySymbol25;
+    private javax.swing.JLabel jPriceCurrencySymbol26;
+    private javax.swing.JLabel jPriceCurrencySymbol27;
+    private javax.swing.JLabel jPriceCurrencySymbol28;
+    private javax.swing.JLabel jPriceCurrencySymbol3;
+    private javax.swing.JLabel jPriceCurrencySymbol4;
+    private javax.swing.JLabel jPriceCurrencySymbol5;
+    private javax.swing.JLabel jPriceCurrencySymbol6;
+    private javax.swing.JLabel jPriceCurrencySymbol7;
+    private javax.swing.JLabel jPriceCurrencySymbol8;
+    private javax.swing.JLabel jPriceCurrencySymbol9;
+    public static javax.swing.JLabel jPriceDCN;
+    public static javax.swing.JLabel jPriceDW;
+    public static javax.swing.JLabel jPriceEGC;
+    public static javax.swing.JLabel jPriceFDR;
+    public static javax.swing.JLabel jPriceFSBW;
+    public static javax.swing.JLabel jPriceFSW;
+    public static javax.swing.JLabel jPriceGAE;
+    public static javax.swing.JLabel jPriceGOR;
+    public static javax.swing.JLabel jPriceHB;
+    public static javax.swing.JLabel jPriceLGCN;
+    public static javax.swing.JLabel jPriceMKCLW;
+    public static javax.swing.JLabel jPriceOCN;
+    public static javax.swing.JLabel jPricePB;
+    public static javax.swing.JLabel jPricePSE;
+    public static javax.swing.JLabel jPriceRE;
+    public static javax.swing.JLabel jPriceSCN;
+    public static javax.swing.JLabel jPriceSDR;
+    public static javax.swing.JLabel jPriceSMR;
+    public static javax.swing.JLabel jPriceSSE;
+    public static javax.swing.JLabel jPriceSSR;
+    public static javax.swing.JLabel jPriceTDN;
+    public static javax.swing.JLabel jPriceTR;
+    public static javax.swing.JLabel jPriceWGOE;
+    private javax.swing.JPanel jRingsPanel;
+    private javax.swing.JScrollPane jScrollPane1;
+    public static javax.swing.JLabel jTItleEGC;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    public static javax.swing.JLabel jTitleBCN;
+    public static javax.swing.JLabel jTitleCCB;
+    public static javax.swing.JLabel jTitleCDR;
+    public static javax.swing.JLabel jTitleCE;
+    public static javax.swing.JLabel jTitleCMBB;
+    public static javax.swing.JLabel jTitleCRE;
+    public static javax.swing.JLabel jTitleDCN;
+    public static javax.swing.JLabel jTitleDW;
+    public static javax.swing.JLabel jTitleFDR;
+    public static javax.swing.JLabel jTitleFSBW;
+    public static javax.swing.JLabel jTitleFSW;
+    public static javax.swing.JLabel jTitleGAE;
+    public static javax.swing.JLabel jTitleGOR;
+    public static javax.swing.JLabel jTitleHB;
+    public static javax.swing.JLabel jTitleLGCN;
+    public static javax.swing.JLabel jTitleMKCLW;
+    public static javax.swing.JLabel jTitleOCN;
+    public static javax.swing.JLabel jTitlePB;
+    public static javax.swing.JLabel jTitlePSE;
+    public static javax.swing.JLabel jTitleRE;
+    public static javax.swing.JLabel jTitleSCN;
+    public static javax.swing.JLabel jTitleSDR;
+    public static javax.swing.JLabel jTitleSMR;
+    public static javax.swing.JLabel jTitleSSE;
+    public static javax.swing.JLabel jTitleSSR;
+    public static javax.swing.JLabel jTitleTDN;
+    public static javax.swing.JLabel jTitleTR;
+    public static javax.swing.JLabel jTitleWGOE;
+    private javax.swing.JPanel jWatchPane;
+    private javax.swing.JPanel jWomensEarringsPanel;
+    private javax.swing.JPanel jWomensNecklacePanel;
+    private javax.swing.JPanel jWomensRingsPane;
+    private javax.swing.JPanel jWristPanel;
+    private javax.swing.JLabel jlblBtoProd;
+    private javax.swing.JLabel jlblPtoCart;
+    public static javax.swing.JLabel lblID;
+    private javax.swing.JButton removeButton;
+    public static javax.swing.JLabel titaniumRing;
+    private javax.swing.JLabel ttlTotal;
+    // End of variables declaration//GEN-END:variables
+}

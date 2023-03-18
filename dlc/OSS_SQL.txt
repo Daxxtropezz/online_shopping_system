@@ -1,0 +1,101 @@
+DROP SCHEMA IF EXISTS online_shopping_system;
+
+CREATE SCHEMA online_shopping_system;
+USE online_shopping_system;
+
+CREATE TABLE customer 
+( 
+CUSTOMER_ID int auto_increment primary key, 
+USERNAME varchar(50) not null, 
+PASSWORD varchar(50) not null, 
+lNAME varchar(50) not null, 
+fNAME varchar(20) not null, 
+BIRTHDATE date not null, 
+SEX varchar(6) not null, 
+CUSTOMER_EMAIL varchar(50) not null, 
+CUSTOMER_PNUMBER varchar(20) not null, 
+ADDRESS varchar(200) not null, 
+CITY varchar(20) not null, 
+ZIP int not null 
+); 
+ALTER TABLE customer auto_increment = 101;
+
+CREATE TABLE product 
+(
+PRODUCT_ID varchar(10) primary key, 
+PRODUCT_NAME varchar(50) not null, 
+PRODUCT_PRICE double not null, 
+PRODUCT_STOCK int not null, 
+PRODUCT_BRAND varchar(15) not null, 
+PRODUCT_CATEGORY varchar(50) not null 
+); 
+
+CREATE TABLE cart 
+( 
+CART_ID int auto_increment primary key, 
+CART_PRODUCTNAME varchar(50) not null, 
+CART_PRODUCTPRICE varchar(40) not null, 
+CART_QUANT int not null, 
+PRODUCT_ID varchar(10) not null, 
+CONSTRAINT FKeyProductlDl FOREIGN KEY (PRODUCT_ID) REFERENCES product(PRODUCT_ID), 
+CUSTOMER_ID int not null, 
+CONSTRAINT FKeyCustomerID2 FOREIGN KEY (CUSTOMER_ID) REFERENCES customer(CUSTOMER_ID) 
+); 
+ALTER TABLE cart auto_increment = 500;
+
+CREATE TABLE payment ( 
+PAYMENT_ID int auto_increment primary key, 
+PAYMENT_AMOUNT double not null, 
+ADDRESS_ID varchar(200) not null, 
+PRODUCT_ID varchar(10) not null, 
+CONSTRAINT FKeyProductlD2 FOREIGN KEY (PRODUCT_ID) REFERENCES product(PRODUCT_ID), 
+PRODUCT_NAME varchar(50) not null, 
+PRODUCT_QUANTITY int not null, 
+CUSTOMER_ID int not null, 
+CONSTRAINT fkeyCustlD FOREIGN KEY (CUSTOMER_ID) REFERENCES customer(CUSTOMER_ID) 
+);
+ALTER TABLE payment auto_increment = 250;
+
+CREATE TABLE orders 
+( 
+order_id int auto_increment primary key, 
+payment_method varchar(50) not null, 
+payment_total double not null, 
+customer_id int not null, 
+CONSTRAINT fkeyOrderCustID FOREIGN KEY (CUSTOMER_ID) REFERENCES customer(CUSTOMER_ID) 
+); 
+ALTER TABLE orders auto_increment = 550;
+
+INSERT INTO PRODUCT VALUES
+('B101', 'Tiffany\'s Hinged Bangle', 4200 ,16 ,'TIFFANY & Co.','BRACELETS'),
+('B102', 'Classy Matte Black Bracelet', 1291.14,15,'N/A','BRACELETS'),
+('B103', 'Cartier\'s Classic Bangle',26705,39,'CARTIER','BRACELETS'),
+('B104', 'Punk\'s Bracelet',437.8,8,'N/A','BRACELETS'),
+('E101', 'Silver Sapphire Earring',18790,29, 'UNISILVER','EARRINGS'),
+('E102', 'Golden Aquamarine Earring',2310,31, 'N/A','EARRINGS'),
+('E103', 'White Gold Onyx Earring',9085.8,36 ,'CARTIER','EARRINGS'), 
+('E104', 'Cross Rounded Earring',1699,29 ,'N/A','EARRINGS'),
+('E105', 'Stud Earring',499,27, 'N/A','EARRINGS'),
+('E106', 'Cross Earring',746,62, 'N/A','EARRINGS'),
+('E107', 'Rounded Earring',699,31, 'N/A','EARRINGS'), 
+('N101', 'Ball Chain Neddace',2343.18,83,'UNISILVER','NECKLACES'),
+('N102', 'Touissant Diamond Neddace',25343.18,65, 'J\'s Diamond', 'NECKLACES'),
+('N103', 'Emerald Golden Choker',29887.5,62, 'J\'s Diamond','NECKLACES'),
+('N104', 'Diamond Choker Neddace',4951.54, 23, 'N/A', 'NECKLACES'),
+('N105', 'Link Golden Chain Neddace',4590.72, 66, 'N/A', 'NECKLACES'), 
+('N106', 'Obsidian Chain Neddace',2175, 19, 'N/A' ,'NECKLACES'),
+('N107', 'Silver Chain Neddace',1386.3, 69, 'N/A', 'NECKLACES'),
+('R101', 'Classy Diamond Ring',21685, 78, 'UNISILVER' ,'RINGS'),
+('R102', 'Floral Diamond Ring',33926, 68, 'J\'s Diamond', 'RINGS'), 
+('R103', 'Square Diamond Ring',34200, 58, 'J\'s Diamond' ,'RINGS'),
+('R104', 'Golden Onyx Ring',762.4, 21, 'N/A', 'RINGS'),
+('R105', 'Titanium Ring',724.2, 69, 'N/A', 'RINGS'),
+('R106', 'Sappire Metal Ring',3726, 18, 'N/A' ,'RINGS'), 
+('R107', 'Stainless Steel Ring',1147.68, 72, 'N/A', 'RINGS'), 
+('W101', 'Didiers Leather Watch',2750, 7, 'DIDIER', 'WATCHES'), 
+('W102', 'Fossil\'s Classic Silver Watch',4305.57, 19, 'FOSSIL' ,'WATCHES'),
+('W103', 'Fossil\'s Silver Blue Watch',4305.57, 24, 'FOSSIL', 'WATCHES'),
+('W104', 'Michael Kors Classic Leather Watch',6646.98, 15, 'MICHAEL KORS', 'WATCHES');
+
+INSERT INTO CUSTOMER(USERNAME,PASSWORD,lNAME,fNAME,BIRTHDATE,SEX,CUSTOMER_EMAIL,CUSTOMER_PNUMBER,ADDRESS,CITY,ZIP) 
+VALUES('admin', 'admin', 'john paul','miraflores','2001-07-09','male','sevhen.nhayn@yahoo.com','09561901685','kingston st.','kingland',4438);
